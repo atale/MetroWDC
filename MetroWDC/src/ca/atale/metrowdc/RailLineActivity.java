@@ -33,11 +33,9 @@ public class RailLineActivity extends ListActivity {
     private static final String TAG_INDESTINATION2 = "InternalDestination2";
     private static final String TAG_LINECODE = "LineCode";
     private static final String TAG_STARTSTATIONCODE = "StartStationCode";
- 
-    // contacts JSONArray
+   
     JSONArray lines = null;
- 
-    // Hashmap for ListView
+     
     ArrayList<HashMap<String, String>> railLines;
 	
 	@Override
@@ -49,6 +47,9 @@ public class RailLineActivity extends ListActivity {
 		
 	       railLines = new ArrayList<HashMap<String, String>>();       
 	       new GetLines().execute();
+	       
+	       //Use .putExtra() to push rail line info to new activity
+	       
 	}
 	
 	private class GetLines extends AsyncTask<Void, Void, Void> {
@@ -58,7 +59,8 @@ public class RailLineActivity extends ListActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
+            
+          
             pDialog = new ProgressDialog(RailLineActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
@@ -68,10 +70,9 @@ public class RailLineActivity extends ListActivity {
  
         @Override
         protected Void doInBackground(Void... arg0) {
-            // Creating service handler class instance
+           
             DataRetriever sh = new DataRetriever();
- 
-            // Making a request to url and getting response
+            
             String jsonStr = sh.makeServiceCall(url + apiKey );
  
             Log.d("Response: ", "> " + jsonStr);
@@ -85,14 +86,14 @@ public class RailLineActivity extends ListActivity {
  
                     // looping through All Contacts
                     for (int i = 0; i < lines.length(); i++) {
-                        JSONObject c = lines.getJSONObject(i);
+                        JSONObject j = lines.getJSONObject(i);
                          
-                        String displayName = c.getString(TAG_DISPLAYNAME);
-                        String endStationCode = c.getString(TAG_ENDSTATIONCODE);
-                        String inDestination1 = c.getString(TAG_INDESTINATION1);
-                        String inDestination2 = c.getString(TAG_INDESTINATION2);
-                        String lineCode = c.getString(TAG_LINECODE);
-                        String startCode = c.getString(TAG_STARTSTATIONCODE);
+                        String displayName = j.getString(TAG_DISPLAYNAME);
+                        String endStationCode = j.getString(TAG_ENDSTATIONCODE);
+                        String inDestination1 = j.getString(TAG_INDESTINATION1);
+                        String inDestination2 = j.getString(TAG_INDESTINATION2);
+                        String lineCode = j.getString(TAG_LINECODE);
+                        String startCode = j.getString(TAG_STARTSTATIONCODE);
  
                         HashMap<String, String> tmpLine = new HashMap<String, String>();
  
@@ -124,9 +125,7 @@ public class RailLineActivity extends ListActivity {
             // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            /**
-             * Updating parsed JSON data into ListView
-             * */
+
             ListAdapter adapter = new SimpleAdapter(RailLineActivity.this, railLines,
                     R.layout.list_item, new String[] {                     		
                     		TAG_DISPLAYNAME, TAG_ENDSTATIONCODE,TAG_INDESTINATION1, 
