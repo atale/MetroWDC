@@ -25,6 +25,7 @@ public class RailLineActivity extends ListActivity {
 
     private static String url = "http://api.wmata.com/Rail.svc/json/jLines?api_key=";
     private static final String apiKey = "ngwgg6v448jhwhbyjfda2vu4";
+    //Put  apiKey/url in values/string.xml later :)
     
     private static final String TAG_LINES = "Lines";
     private static final String TAG_DISPLAYNAME = "DisplayName";
@@ -48,7 +49,28 @@ public class RailLineActivity extends ListActivity {
 	       railLines = new ArrayList<HashMap<String, String>>();       
 	       new GetLines().execute();
 	       
-	       //Use .putExtra() to push rail line info to new activity
+	       ListView lv = getListView();
+	       
+	       lv.setOnItemClickListener(new OnItemClickListener(){
+	    	   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+	    		   
+	    		   String lineName = ((TextView) view).getText().toString();
+	    		   
+	    		   Intent i = new Intent(getApplicationContext(), RLineSelect.class);
+	    		   
+	    		   i.putExtra("title", lineName);
+	    		   i.putExtra(TAG_ENDSTATIONCODE, railLines.get(position).get(TAG_ENDSTATIONCODE));
+	    		   i.putExtra(TAG_INDESTINATION1, railLines.get(position).get(TAG_INDESTINATION1));
+	    		   i.putExtra(TAG_INDESTINATION2, railLines.get(position).get(TAG_INDESTINATION2));
+	    		   i.putExtra(TAG_LINECODE, railLines.get(position).get(TAG_LINECODE));
+	    		   i.putExtra(TAG_STARTSTATIONCODE, railLines.get(position).get(TAG_STARTSTATIONCODE));
+
+	    		   
+	    		   startActivity(i);
+	    		   
+	    	   }
+	       });
+	       
 	       
 	}
 	
@@ -128,11 +150,13 @@ public class RailLineActivity extends ListActivity {
 
             ListAdapter adapter = new SimpleAdapter(RailLineActivity.this, railLines,
                     R.layout.list_item, new String[] {                     		
-                    		TAG_DISPLAYNAME, TAG_ENDSTATIONCODE,TAG_INDESTINATION1, 
-                    		TAG_INDESTINATION2, TAG_LINECODE, TAG_STARTSTATIONCODE
+                    		TAG_DISPLAYNAME
+                    		//, TAG_ENDSTATIONCODE,TAG_INDESTINATION1, 
+                    		//TAG_INDESTINATION2, TAG_LINECODE, TAG_STARTSTATIONCODE
                     		}, 
-                    		new int[] {R.id.displayName, R.id.endStationCode, R.id.internalDestination1, 
-            					R.id.internalDestination2, R.id.lineCode, R.id.startStationCode});
+                    		new int[] {R.id.displayName});                    		
+//poop                    		new int[] {R.id.displayName, R.id.endStationCode, R.id.internalDestination1, 
+//            					R.id.internalDestination2, R.id.lineCode, R.id.startStationCode});
             setListAdapter(adapter);
         }
  

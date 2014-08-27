@@ -4,5 +4,7 @@
     <string name="app_name">MetroWDC</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_rail_line">RailLineActivity</string>
+    <string name="title_activity_rline_select">RLineSelect</string>
+
 
 </resources>
