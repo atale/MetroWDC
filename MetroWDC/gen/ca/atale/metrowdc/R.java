@@ -11,25 +11,38 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int metrolog=0x7f020001;
+        public static final int busicon=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
+        public static final int metroicon=0x7f020002;
+        public static final int metrolog=0x7f020003;
+        public static final int trainicon=0x7f020004;
     }
     public static final class id {
         public static final int button_Rail=0x7f060000;
-        public static final int button_railway=0x7f060002;
-        public static final int displayName=0x7f060004;
-        public static final int linearLayout=0x7f060001;
-        public static final int stationName=0x7f060003;
+        public static final int displayName=0x7f060003;
+        public static final int icon_menuitem=0x7f060004;
+        public static final int label_menuitem=0x7f060005;
+        public static final int label_sName=0x7f060006;
+        public static final int mainmenu=0x7f060001;
+        public static final int pbar_railline=0x7f060002;
+        public static final int station_address=0x7f060007;
+        public static final int station_zip=0x7f060008;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int activity_rail_line=0x7f030001;
-        public static final int activity_rlineselect=0x7f030002;
-        public static final int list_item=0x7f030003;
+        public static final int activity_bus_line=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int activity_rail_line=0x7f030002;
+        public static final int activity_rlineselect=0x7f030003;
+        public static final int list_item=0x7f030004;
+        public static final int main_list=0x7f030005;
+        public static final int station_list=0x7f030006;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int hello_world=0x7f040001;
+        public static final int menu_bus=0x7f040005;
+        public static final int menu_rail=0x7f040004;
+        public static final int title_activity_bus_line=0x7f040006;
         public static final int title_activity_rail_line=0x7f040002;
         public static final int title_activity_rline_select=0x7f040003;
     }

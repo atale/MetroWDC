@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -54,11 +55,12 @@ public class RailLineActivity extends ListActivity {
 	       lv.setOnItemClickListener(new OnItemClickListener(){
 	    	   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 	    		   
-	    		   String lineName = ((TextView) view).getText().toString();
+	    		   String lineName = ((TextView) view.findViewById(R.id.displayName))
+	                        .getText().toString();
 	    		   
-	    		   Intent i = new Intent(getApplicationContext(), RLineSelect.class);
+	    		   Intent i = new Intent(RailLineActivity.this, RLineSelect.class);
 	    		   
-	    		   i.putExtra("title", lineName);
+	    		   i.putExtra("title", lineName);		   
 	    		   i.putExtra(TAG_ENDSTATIONCODE, railLines.get(position).get(TAG_ENDSTATIONCODE));
 	    		   i.putExtra(TAG_INDESTINATION1, railLines.get(position).get(TAG_INDESTINATION1));
 	    		   i.putExtra(TAG_INDESTINATION2, railLines.get(position).get(TAG_INDESTINATION2));
@@ -67,6 +69,7 @@ public class RailLineActivity extends ListActivity {
 
 	    		   
 	    		   startActivity(i);
+	    		   Log.d("yolo","asdasd");
 	    		   
 	    	   }
 	       });
@@ -76,17 +79,16 @@ public class RailLineActivity extends ListActivity {
 	
 	private class GetLines extends AsyncTask<Void, Void, Void> {
 		 
-		private ProgressDialog pDialog;
+		private ProgressBar spinner;
+		
 		
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             
-          
-            pDialog = new ProgressDialog(RailLineActivity.this);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+            spinner = (ProgressBar)findViewById(R.id.pbar_railline);
+            spinner.setVisibility(View.VISIBLE);
+   
  
         }
  
@@ -103,10 +105,10 @@ public class RailLineActivity extends ListActivity {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
                      
-                    // Getting JSON Array node
+                    
                     lines = jsonObj.getJSONArray(TAG_LINES);
  
-                    // looping through All Contacts
+                    
                     for (int i = 0; i < lines.length(); i++) {
                         JSONObject j = lines.getJSONObject(i);
                          
@@ -119,7 +121,7 @@ public class RailLineActivity extends ListActivity {
  
                         HashMap<String, String> tmpLine = new HashMap<String, String>();
  
-                        // adding each child node to HashMap key => value
+                        
                         tmpLine.put(TAG_DISPLAYNAME, displayName);
                         tmpLine.put(TAG_ENDSTATIONCODE, endStationCode);
                         tmpLine.put(TAG_INDESTINATION1, inDestination1);
@@ -127,7 +129,7 @@ public class RailLineActivity extends ListActivity {
                         tmpLine.put(TAG_LINECODE, lineCode);
                         tmpLine.put(TAG_STARTSTATIONCODE, startCode);
 
-                        // adding contact to contact list
+                        
                         railLines.add(tmpLine);
                     }
                 } catch (JSONException e) {
@@ -144,19 +146,15 @@ public class RailLineActivity extends ListActivity {
         protected void onPostExecute(Void result) {
         	Log.d("Async", "Successful");
             super.onPostExecute(result);
-            // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+            
+            spinner.setVisibility(View.GONE);
 
             ListAdapter adapter = new SimpleAdapter(RailLineActivity.this, railLines,
                     R.layout.list_item, new String[] {                     		
                     		TAG_DISPLAYNAME
-                    		//, TAG_ENDSTATIONCODE,TAG_INDESTINATION1, 
-                    		//TAG_INDESTINATION2, TAG_LINECODE, TAG_STARTSTATIONCODE
                     		}, 
                     		new int[] {R.id.displayName});                    		
-//poop                    		new int[] {R.id.displayName, R.id.endStationCode, R.id.internalDestination1, 
-//            					R.id.internalDestination2, R.id.lineCode, R.id.startStationCode});
+
             setListAdapter(adapter);
         }
  

@@ -3,8 +3,10 @@
 
     <string name="app_name">MetroWDC</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_rail_line">RailLineActivity</string>
+    <string name="title_activity_rail_line">Rail Lines</string>
     <string name="title_activity_rline_select">RLineSelect</string>
-
+    <string name="menu_rail">Rail Lines</string>
+    <string name="menu_bus">Bus Lines</string>
+    <string name="title_activity_bus_line">BusLineActivity</string>
 
 </resources>

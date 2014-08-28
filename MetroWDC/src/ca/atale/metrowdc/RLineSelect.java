@@ -18,38 +18,57 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class RLineSelect extends ListActivity {
 	
-    private static String url = "http://api.wmata.com/Rail.svc/json/jLines?api_key=";
-    private static final String apiKey = "ngwgg6v448jhwhbyjfda2vu4";
+    private static String url = "http://api.wmata.com/Rail.svc/json/jStations?LineCode=";
+    private static final String apiKey = "&api_key=ngwgg6v448jhwhbyjfda2vu4";
 
-    JSONArray stations = null;
+    private static final String TAG_STATION = "Stations";
+    private static final String TAG_SNAME = "Name";
+    private static final String TAG_ADDRESS = "Address";
+    private static final String TAG_STREET = "Street";
+    private static final String TAG_ZIP = "Zip";
+    private static final String TAG_COORDLAT = "Lat";
+    private static final String TAG_COORDLON = "Lon";
+    
+    String lineCode = null;
+    
+    JSONArray stations = null;   
+    ArrayList<HashMap<String, String>> stationInfo;
+   
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rlineselect);
 		
+		Intent in = getIntent();
+		Bundle b = in.getExtras();
 		
+		if(b!=null)
+		{
+			lineCode = (String) b.getString("LineCode");
+		}
+		
+		stationInfo = new ArrayList<HashMap<String, String>>();
 		new GetStation().execute();
 	}
 	
+	
 	private class GetStation extends AsyncTask<Void, Void, Void> {
 		 
-		private ProgressDialog pDialog;
+		private ProgressBar spinner;
 		
 	    @Override
 	    protected void onPreExecute() {
 	        super.onPreExecute();
 	        
-	      
-	        pDialog = new ProgressDialog(RLineSelect.this);
-	        pDialog.setMessage("Please wait...");
-	        pDialog.setCancelable(false);
-	        pDialog.show();
+	        spinner = (ProgressBar)findViewById(R.id.pbar_railline);
+            spinner.setVisibility(View.VISIBLE);
 
 	    }
 
@@ -58,7 +77,7 @@ public class RLineSelect extends ListActivity {
 	       
 	        DataRetriever sh = new DataRetriever();
 	        
-	        String jsonStr = sh.makeServiceCall(url + apiKey );
+	        String jsonStr = sh.makeServiceCall(url + lineCode + apiKey );
 
 	        Log.d("Response: ", "> " + jsonStr);
 
@@ -67,31 +86,31 @@ public class RLineSelect extends ListActivity {
 	                JSONObject jsonObj = new JSONObject(jsonStr);
 	                 
 	                // Getting JSON Array node
-	                stations = jsonObj.getJSONArray(TAG_LINES);
+	                stations = jsonObj.getJSONArray(TAG_STATION);
+
 
 	                // looping through All Contacts
 	                for (int i = 0; i < stations.length(); i++) {
-	                    JSONObject j = stations.getJSONObject(i);
-	                     
-	                    String displayName = j.getString(TAG_DISPLAYNAME);
-	                    String endStationCode = j.getString(TAG_ENDSTATIONCODE);
-	                    String inDestination1 = j.getString(TAG_INDESTINATION1);
-	                    String inDestination2 = j.getString(TAG_INDESTINATION2);
-	                    String lineCode = j.getString(TAG_LINECODE);
-	                    String startCode = j.getString(TAG_STARTSTATIONCODE);
+	                    
+	                	JSONObject j = stations.getJSONObject(i);
+	                    
+	                    JSONObject address = j.getJSONObject(TAG_ADDRESS);
+	                    
+	                    String sName = j.getString(TAG_SNAME);
+	                    String sLat = j.getString(TAG_COORDLAT);
+	                    String sLon = j.getString(TAG_COORDLON);
+	                    String sStreet = address.getString(TAG_STREET);
+	                    String sZip = address.getString(TAG_ZIP);	                    
 
-	                    HashMap<String, String> tmpLine = new HashMap<String, String>();
+	                    HashMap<String, String> tmpStation = new HashMap<String, String>();
+	                    
+	                    tmpStation.put(TAG_SNAME, sName);
+	                    tmpStation.put(TAG_COORDLAT, sLat);
+	                    tmpStation.put(TAG_COORDLON, sLon);
+	                    tmpStation.put(TAG_STREET, sStreet);
+	                    tmpStation.put(TAG_ZIP, sZip);
 
-	                    // adding each child node to HashMap key => value
-	                    tmpLine.put(TAG_DISPLAYNAME, displayName);
-	                    tmpLine.put(TAG_ENDSTATIONCODE, endStationCode);
-	                    tmpLine.put(TAG_INDESTINATION1, inDestination1);
-	                    tmpLine.put(TAG_INDESTINATION2, inDestination2);
-	                    tmpLine.put(TAG_LINECODE, lineCode);
-	                    tmpLine.put(TAG_STARTSTATIONCODE, startCode);
-
-	                    // adding contact to contact list
-	                    railLines.add(tmpLine);
+	                    stationInfo.add(tmpStation);
 	                }
 	            } catch (JSONException e) {
 	                e.printStackTrace();
@@ -105,29 +124,25 @@ public class RLineSelect extends ListActivity {
 
 	    @Override
 	    protected void onPostExecute(Void result) {
-	    	Log.d("Async", "Successful");
+	    	Log.d("Async", "Stations Successful");
 	        super.onPostExecute(result);
-	        // Dismiss the progress dialog
-	        if (pDialog.isShowing())
-	            pDialog.dismiss();
 
-	        ListAdapter adapter = new SimpleAdapter(RailLineActivity.this, railLines,
-	                R.layout.list_item, new String[] {                     		
-	                		TAG_DISPLAYNAME
-	                		//, TAG_ENDSTATIONCODE,TAG_INDESTINATION1, 
-	                		//TAG_INDESTINATION2, TAG_LINECODE, TAG_STARTSTATIONCODE
-	                		}, 
-	                		new int[] {R.id.displayName});                    		
-	//poop                    		new int[] {R.id.displayName, R.id.endStationCode, R.id.internalDestination1, 
-//	        					R.id.internalDestination2, R.id.lineCode, R.id.startStationCode});
+	        spinner.setVisibility(View.GONE);
+
+	        ListAdapter adapter = new SimpleAdapter(RLineSelect.this, stationInfo,
+	                R.layout.station_list, 
+	                	new String[] {                     		
+	                		TAG_SNAME, TAG_STREET, TAG_ZIP}, 
+	                	new int[] {
+	        				R.id.label_sName, R.id.station_address, R.id.station_zip});                    		
 	        setListAdapter(adapter);
 	    }
 
 	}
 
 	 
-	}
-	
 }
+	
+
 
 
