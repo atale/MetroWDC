@@ -36,6 +36,12 @@
             android:name=".BusLineActivity"
             android:label="@string/title_activity_bus_line" >
         </activity>
+        
+        <provider 
+           android:name="DataProvider" 
+           android:authorities="ca.atale.metrowdc.provider">
+        </provider>
+        
     </application>
 
 </manifest>
